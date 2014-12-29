@@ -3,7 +3,6 @@
 
 @prefix lv2atom: <http://lv2plug.in/ns/ext/atom#>.
 @prefix lv2midi: <http://lv2plug.in/ns/ext/midi#>.
-@prefix lv2time: <http://lv2plug.in/ns/ext/time#>.
 
 @prefix p: <https://github.com/metachronica/audio-dsp-midi-trigger>.
 
@@ -29,7 +28,7 @@ p:
 	lv2:port [
 		a lv2:OutputPort, lv2atom:AtomPort;
 		lv2atom:bufferType lv2atom:Sequence;
-		lv2atom:supports lv2midi:MidiEvent, lv2time:Position;
+		lv2atom:supports lv2midi:MidiEvent;
 		lv2:index 1;
 		lv2:symbol "output_midi_trigger";
 		lv2:name "Output MIDI trigger";

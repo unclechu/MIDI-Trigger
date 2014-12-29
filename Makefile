@@ -10,7 +10,7 @@ $(BUNDLE): clean $(NAME).so
 	cp $(TTLS) $(NAME).so $(BUNDLE)
 
 $(NAME).so:
-	gcc -shared -fPIC -DPIC src/$(NAME).c $(LIBS) -o $(NAME).so $(DEBUG)
+	g++ -shared -fPIC -DPIC src/$(NAME).c $(LIBS) -o $(NAME).so $(DEBUG)
 
 clean:
 	rm -rf $(BUNDLE) $(NAME).so
