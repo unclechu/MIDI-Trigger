@@ -76,6 +76,18 @@ static void connect_port(LV2_Handle instance, uint32_t port, void* data) {
 		case gap:
 			plugin->channels.gap = (float *)data;
 			break;
+		case threshold:
+			plugin->channels.threshold = (float *)data;
+			break;
+		case midi_note:
+			plugin->channels.midi_note = (float *)data;
+			break;
+		case velocity_floor:
+			plugin->channels.velocity_floor = (float *)data;
+			break;
+		case velocity_ceiling:
+			plugin->channels.velocity_ceiling = (float *)data;
+			break;
 	}
 }
 
@@ -106,8 +118,8 @@ static void run(LV2_Handle instance, uint32_t n_samples){
 			msg[0] = LV2_MIDI_MSG_NOTE_OFF;
 			a = 0;
 		}
-		msg[1] = 70;
-		msg[2] = 80;
+		msg[1] = 60;
+		msg[2] = 1;
 
 		lv2_atom_sequence_append_event(
 			plugin->channels.output_midi, capacity, event);
