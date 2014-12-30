@@ -48,7 +48,7 @@ typedef struct {
 
 
 typedef struct {
-	LV2_URID_Map* map = NULL; // features
+	LV2_URID_Map* map; // features
 	PluginURIs uris; // URIs
 
 	Channels channels;

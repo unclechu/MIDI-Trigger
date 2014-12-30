@@ -37,6 +37,8 @@ static LV2_Handle instantiate (
 	Plugin *plugin = (Plugin *)malloc(sizeof(Plugin));
 	if (!plugin) return NULL;
 
+	plugin->map = NULL;
+
 	// get host features
 	int i;
 	for (i=0; features && features[i]; ++i) {
