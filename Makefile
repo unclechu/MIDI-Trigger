@@ -13,7 +13,7 @@ $(BUNDLE): clean $(NAME).so
 	cp $(TTLS) $(NAME).so $(BUNDLE)
 
 $(NAME).so:
-	gcc -std=c99 -shared -fPIC -DPIC src/$(NAME).c $(LIBS) -o $(NAME).so $(DEBUG_C_FLAGS)
+	gcc -std=c99 -shared -fPIC -DPIC src/$(NAME).c $(LIBS) -o $(NAME).so $(DEBUG_C_FLAGS) $(C_FLAGS)
 
 clean:
 	rm -rf $(BUNDLE) $(NAME).so
