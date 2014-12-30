@@ -1,6 +1,6 @@
 NAME = midi-trigger
 BUNDLE = $(NAME).lv2
-LIBS = `pkg-config --cflags --libs lv2` -lm
+LIBS = -lm `pkg-config --cflags --libs lv2`
 CXX = gcc
 CXX_FLAGS = -std=c99 -fPIC -DPIC
 

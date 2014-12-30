@@ -24,19 +24,26 @@
 #include "lv2/lv2plug.in/ns/ext/urid/urid.h"
 
 #include "uris.h"
+#include "rms.h"
 
 #define PLUGIN_URI "https://github.com/metachronica/audio-dsp-midi-trigger"
 
+#define DETECTOR_BUFFER_MAX 20099 // ms
+#define DETECTOR_GAP_MAX 20009 // ms
+
 /** Define a macro for converting a gain in dB to a coefficient */
 #define DB_CO(g) ((g) > -90.0f ? powf(10.0f, (g) * 0.05f) : 0.0f)
+#define CO_DB(c) (log10f(c) / 0.05f)
+
+#define SAMPLES_IN_MS(SR, MS) (round(SR / 1000.0f * MS))
 
 
 typedef enum {
 	input_audio = 0,
 	output_midi = 1,
 	input_gain = 2,
-	buffer = 3,
-	gap = 4,
+	detector_buffer = 3,
+	detector_gap = 4,
 	threshold = 5,
 	midi_note = 6,
 	velocity_floor = 7,
@@ -48,8 +55,8 @@ typedef struct {
 	const float* input_audio;
 	LV2_Atom_Sequence* output_midi;
 	const float* input_gain;
-	const float* buffer;
-	const float* gap;
+	const float* detector_buffer;
+	const float* detector_gap;
 	const float* threshold;
 	const float* midi_note;
 	const float* velocity_floor;
@@ -61,10 +68,12 @@ typedef struct {
 	LV2_URID_Map* map; // features
 	PluginURIs uris; // URIs
 	Channels channels;
-	float** detector_buffer; // array of samples
+	uint32_t SR;
+	float* detector_buffer; // array of samples
 	uint32_t detector_buf_size; // size in samples
 	uint32_t detector_counter; // samples counter
-	uint32_t gap_counter; // samples counter
+	uint32_t detector_gap_counter; // samples counter
+	bool is_gap_active; // waiting flag, TODO do stuff without this flag
 } Plugin;
 
 static LV2_Handle instantiate (

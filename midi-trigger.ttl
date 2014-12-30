@@ -44,18 +44,18 @@ p:
 	], [
 		a lv2:ControlPort, lv2:InputPort;
 		lv2:index 3;
-		lv2:symbol "buffer";
-		lv2:name "Buffer (ms)";
-		lv2:minimum 0.5;
-		lv2:maximum 100;
+		lv2:symbol "detector_buffer";
+		lv2:name "Detector buffer (ms)";
+		lv2:minimum 5;
+		lv2:maximum 20099;
 		lv2:default 0.5;
 	], [
 		a lv2:ControlPort, lv2:InputPort;
 		lv2:index 4;
-		lv2:symbol "gap";
-		lv2:name "Gap (ms)";
-		lv2:minimum 0.5;
-		lv2:maximum 2000;
+		lv2:symbol "detector_gap";
+		lv2:name "Detector gap (ms)";
+		lv2:minimum 100;
+		lv2:maximum 20009;
 		lv2:default 10;
 	], [
 		a lv2:ControlPort, lv2:InputPort;
@@ -64,7 +64,7 @@ p:
 		lv2:name "Threshold (dB)";
 		lv2:minimum -60;
 		lv2:maximum 0;
-		lv2:default -7;
+		lv2:default -20;
 	], [
 		a lv2:ControlPort, lv2:InputPort;
 		lv2:index 6;

@@ -12,6 +12,6 @@
 #include <math.h>
 #include <inttypes.h>
 
-inline float rms(float** buff, uint32_t size);
+float rms(float* buff, uint32_t size);
 
 #endif // RMS_H
