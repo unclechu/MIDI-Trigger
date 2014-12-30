@@ -89,27 +89,31 @@ static void run(LV2_Handle instance, uint32_t n_samples){
 	lv2_atom_sequence_clear(plugin->channels.output_midi);
 	plugin->channels.output_midi->atom.type = plugin->uris.atom_Sequence;
 
-	LV2_Atom_Event* event = (LV2_Atom_Event *)malloc(sizeof(LV2_Atom_Event));
+	for (int i=0; i<n_samples; ++i) {
+		LV2_Atom_Event* event = (LV2_Atom_Event *)malloc(sizeof(LV2_Atom_Event));
 
-	event->time.frames = 0;
-	event->body.type = plugin->uris.midi_Event;
-	event->body.size = 3;
+		event->time.frames = i;
+		event->body.type = plugin->uris.midi_Event;
+		event->body.size = 3;
 
-	uint8_t* msg = (uint8_t *)LV2_ATOM_BODY(&event->body);
+		uint8_t* msg = (uint8_t *)LV2_ATOM_BODY(&event->body);
 
-	// test note hardcode
-	if (a == 0) {
-		msg[0] = LV2_MIDI_MSG_NOTE_ON;
-		a = 1;
-	} else {
-		msg[0] = LV2_MIDI_MSG_NOTE_OFF;
-		a = 0;
+		// test note hardcode
+		if (a == 0) {
+			msg[0] = LV2_MIDI_MSG_NOTE_ON;
+			a = 1;
+		} else {
+			msg[0] = LV2_MIDI_MSG_NOTE_OFF;
+			a = 0;
+		}
+		msg[1] = 70;
+		msg[2] = 80;
+
+		lv2_atom_sequence_append_event(
+			plugin->channels.output_midi, capacity, event);
+
+		free(event);
 	}
-	msg[1] = 70;
-	msg[2] = 80;
-
-	lv2_atom_sequence_append_event(
-		plugin->channels.output_midi, capacity, event);
 }
 
 static void cleanup ( LV2_Handle instance ) {

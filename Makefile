@@ -1,7 +1,7 @@
 NAME = midi-trigger
 BUNDLE = $(NAME).lv2
 LIBS = `pkg-config --cflags --libs lv2`
-DEBUG = #-DDEBUG
+DEBUG = -g -DDEBUG
 
 TTLS = manifest.ttl $(NAME).ttl
 

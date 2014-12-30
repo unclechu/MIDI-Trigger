@@ -16,7 +16,7 @@ typedef struct {
 	LV2_URID midi_Event;
 } PluginURIs;
 
-inline void map_plugin_uris(LV2_URID_Map* mapinst, PluginURIs* uris) {
+void map_plugin_uris(LV2_URID_Map* mapinst, PluginURIs* uris) {
 	uris->atom_Sequence = mapinst->map(mapinst->handle, LV2_ATOM__Sequence);
 	uris->midi_Event = mapinst->map(mapinst->handle, LV2_MIDI__MidiEvent);
 }
