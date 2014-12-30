@@ -40,8 +40,7 @@ static LV2_Handle instantiate (
 	plugin->map = NULL;
 
 	// get host features
-	int i;
-	for (i=0; features && features[i]; ++i) {
+	for (int i=0; features && features[i]; ++i) {
 		if (strcmp(features[i]->URI, LV2_URID__map) == 0) {
 			plugin->map = (LV2_URID_Map *)features[i]->data;
 		}
