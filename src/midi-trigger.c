@@ -203,7 +203,8 @@ static void run(LV2_Handle instance, uint32_t n_samples) {
 		// if detector buffer not yet filled
 		if (plugin->detector_counter < plugin->detector_buf_size) {
 			plugin->detector_buffer[plugin->detector_counter] =
-				plugin->channels.input_audio[i];
+				plugin->channels.input_audio[i]
+				* DB_CO(*(plugin->channels.input_gain));
 			plugin->detector_counter++;
 			continue;
 		}
