@@ -36,6 +36,7 @@
 #define CO_DB(c) (log10f(c) / 0.05f)
 
 #define SAMPLES_IN_MS(MS, SR) (round((SR / 1000.0f) * MS))
+#define LEN(MIN, MAX) (MAX - MIN)
 
 
 typedef enum {
@@ -47,7 +48,8 @@ typedef enum {
 	threshold = 5,
 	midi_note = 6,
 	velocity_floor = 7,
-	velocity_ceiling = 8
+	velocity_ceiling = 8,
+	limit_rms_velocity_ceiling = 9
 } PortIndex;
 
 
@@ -61,6 +63,7 @@ typedef struct {
 	const float* midi_note;
 	const float* velocity_floor;
 	const float* velocity_ceiling;
+	const float* limit_rms_velocity_ceiling;
 } Channels;
 
 

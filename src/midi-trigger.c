@@ -97,6 +97,9 @@ static void connect_port(LV2_Handle instance, uint32_t port, void* data) {
 		case velocity_ceiling:
 			plugin->channels.velocity_ceiling = (float *)data;
 			break;
+		case limit_rms_velocity_ceiling:
+			plugin->channels.limit_rms_velocity_ceiling = (float *)data;
+			break;
 	}
 }
 
@@ -104,7 +107,8 @@ static inline void gen_midi_event(
 	Plugin* plugin,
 	uint32_t *capacity,
 	LV2_Midi_Message_Type type,
-	uint32_t frame
+	uint32_t frame,
+	float rms_dB
 ) {
 	LV2_Atom_Event* event = (LV2_Atom_Event *)malloc(sizeof(LV2_Atom_Event));
 
@@ -116,7 +120,28 @@ static inline void gen_midi_event(
 
 	msg[0] = type;
 	msg[1] = floor(*(plugin->channels.midi_note));
-	msg[2] = 127;
+
+	if (type == LV2_MIDI_MSG_NOTE_OFF) {
+		msg[0] = 0;
+	} else {
+		const float rms_min = *(plugin->channels.threshold);
+		const float rms_max = *(plugin->channels.limit_rms_velocity_ceiling);
+		const float vel_min = *(plugin->channels.velocity_floor);
+		const float vel_max = *(plugin->channels.velocity_ceiling);
+
+		// limiting
+		if (rms_dB > rms_max) rms_dB = rms_max;
+
+		const float rms_len = LEN(rms_min, rms_max);
+		const float vel_len = LEN(vel_min, vel_max);
+		const float rms_by_len = rms_dB - rms_min;
+
+		if (rms_len <= 0 || vel_len <= 0) {
+			msg[2] = 0;
+		} else {
+			msg[2] = (uint8_t)(((rms_by_len * vel_len) / rms_len) + vel_min);
+		}
+	}
 
 	lv2_atom_sequence_append_event(
 		plugin->channels.output_midi, *capacity, event);
@@ -147,6 +172,8 @@ static void run(LV2_Handle instance, uint32_t n_samples) {
 		SAMPLES_IN_MS( *(plugin->channels.detector_buffer), plugin->SR );
 	uint32_t gap_size =
 		SAMPLES_IN_MS( *(plugin->channels.detector_gap), plugin->SR );
+
+	// TODO store last midi note and after change send note off
 
 	// if detector buffer size is changed then reset all counters
 	if (plugin->detector_buf_size != detector_buf_size) {
@@ -195,8 +222,8 @@ static void run(LV2_Handle instance, uint32_t n_samples) {
 			uint32_t frame = i;
 			if (frame <= 0) frame = 1;
 			prepare_midi_port(plugin, &already_prepared, &capacity);
-			gen_midi_event(plugin, &capacity, LV2_MIDI_MSG_NOTE_OFF, frame-1);
-			gen_midi_event(plugin, &capacity, LV2_MIDI_MSG_NOTE_ON, frame);
+			gen_midi_event(plugin, &capacity, LV2_MIDI_MSG_NOTE_OFF, frame-1, 0.0f);
+			gen_midi_event(plugin, &capacity, LV2_MIDI_MSG_NOTE_ON, frame, rms_dB);
 
 			// enable waiting for gap
 			plugin->is_gap_active = true;
