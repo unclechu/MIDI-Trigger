@@ -8,7 +8,7 @@
 
 #include "rms.h"
 
-float rms(float* buff, uint32_t size) {
+inline float rms(float* buff, uint32_t size) {
 	float sum = 0.0f;
 
 	for (uint32_t i=0; i<size; ++i) {

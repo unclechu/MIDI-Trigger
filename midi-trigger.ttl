@@ -46,17 +46,17 @@ p:
 		lv2:index 3;
 		lv2:symbol "detector_buffer";
 		lv2:name "Detector buffer (ms)";
-		lv2:minimum 5;
-		lv2:maximum 20099;
-		lv2:default 0.5;
+		lv2:minimum 1;
+		lv2:maximum 200;
+		lv2:default 5;
 	], [
 		a lv2:ControlPort, lv2:InputPort;
 		lv2:index 4;
 		lv2:symbol "detector_gap";
 		lv2:name "Detector gap (ms)";
-		lv2:minimum 100;
-		lv2:maximum 20009;
-		lv2:default 10;
+		lv2:minimum 10;
+		lv2:maximum 2000;
+		lv2:default 100;
 	], [
 		a lv2:ControlPort, lv2:InputPort;
 		lv2:index 5;

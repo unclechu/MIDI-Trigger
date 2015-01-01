@@ -100,14 +100,12 @@ static void connect_port(LV2_Handle instance, uint32_t port, void* data) {
 	}
 }
 
-void gen_midi_event(
-	Plugin* plugin, LV2_Midi_Message_Type type, uint32_t frame
+static inline void gen_midi_event(
+	Plugin* plugin,
+	uint32_t *capacity,
+	LV2_Midi_Message_Type type,
+	uint32_t frame
 ) {
-	const uint32_t capacity = plugin->channels.output_midi->atom.size;
-
-	lv2_atom_sequence_clear(plugin->channels.output_midi);
-	plugin->channels.output_midi->atom.type = plugin->uris.atom_Sequence;
-
 	LV2_Atom_Event* event = (LV2_Atom_Event *)malloc(sizeof(LV2_Atom_Event));
 
 	event->time.frames = frame;
@@ -121,33 +119,53 @@ void gen_midi_event(
 	msg[2] = 127;
 
 	lv2_atom_sequence_append_event(
-		plugin->channels.output_midi, capacity, event);
+		plugin->channels.output_midi, *capacity, event);
 
 	free(event);
+}
+
+static inline void prepare_midi_port(
+	Plugin* plugin, bool* already_prepared, uint32_t* capacity
+) {
+	if (*already_prepared) return;
+	else *already_prepared = true;
+
+	*capacity = plugin->channels.output_midi->atom.size;
+
+	lv2_atom_sequence_clear(plugin->channels.output_midi);
+	plugin->channels.output_midi->atom.type = plugin->uris.atom_Sequence;
 }
 
 static void run(LV2_Handle instance, uint32_t n_samples) {
 	Plugin *plugin = (Plugin *)instance;
 
+	bool already_prepared = false;
+	uint32_t capacity;
+
+	// TODO optimize
 	uint32_t detector_buf_size =
 		SAMPLES_IN_MS( *(plugin->channels.detector_buffer), plugin->SR );
 	uint32_t gap_size =
 		SAMPLES_IN_MS( *(plugin->channels.detector_gap), plugin->SR );
 
+	// if detector buffer size is changed then reset all counters
 	if (plugin->detector_buf_size != detector_buf_size) {
 		plugin->detector_counter = 0;
 		plugin->detector_gap_counter = 0;
 		plugin->detector_buf_size = detector_buf_size;
-		plugin->is_gap_active = true;
+		plugin->is_gap_active = false;
 	}
 
 	for (uint32_t i=0; i<n_samples; i++) {
+		// waiting for gap if gap is active
 		// TODO skip gap rest samples for i (optimization)
 		if (plugin->is_gap_active) {
+			// if waiting is finished
 			if (plugin->detector_gap_counter >= gap_size) {
 				plugin->is_gap_active = false;
 				plugin->detector_gap_counter = 0;
 				plugin->detector_counter = 0;
+			// if still waiting
 			} else {
 				plugin->detector_gap_counter++;
 				continue;
@@ -155,6 +173,7 @@ static void run(LV2_Handle instance, uint32_t n_samples) {
 		}
 
 		// storing samples to detector buffer
+		// if detector buffer not yet filled
 		if (plugin->detector_counter < plugin->detector_buf_size) {
 			plugin->detector_buffer[plugin->detector_counter] =
 				plugin->channels.input_audio[i];
@@ -162,20 +181,27 @@ static void run(LV2_Handle instance, uint32_t n_samples) {
 			continue;
 		}
 
-		// if we have fully filled buffer
+		// if we have fully filled detector buffer
 
-		float dB =
+		// calculate RMS in dB by detector buffer
+		// TODO support calculating in own thread
+		float rms_dB =
 			CO_DB(rms(plugin->detector_buffer, plugin->detector_buf_size));
 
-		if (dB >= *(plugin->channels.threshold)) {
+		// if RMS has enough loud peak to send MIDI note
+		if (rms_dB >= *(plugin->channels.threshold)) {
+
+			// temporarly test solution
 			uint32_t frame = i;
 			if (frame <= 0) frame = 1;
+			prepare_midi_port(plugin, &already_prepared, &capacity);
+			gen_midi_event(plugin, &capacity, LV2_MIDI_MSG_NOTE_OFF, frame-1);
+			gen_midi_event(plugin, &capacity, LV2_MIDI_MSG_NOTE_ON, frame);
 
-			gen_midi_event(plugin, LV2_MIDI_MSG_NOTE_OFF, frame-1);
-			gen_midi_event(plugin, LV2_MIDI_MSG_NOTE_ON, frame);
-
-			// enable waiting
+			// enable waiting for gap
 			plugin->is_gap_active = true;
+		} else {
+			plugin->detector_counter = 0;
 		}
 	}
 }
