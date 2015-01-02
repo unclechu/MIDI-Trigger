@@ -8,6 +8,18 @@
 
 #include "run.h"
 
+static inline void prepare_midi_port(
+	Plugin* plugin, bool* already_prepared, uint32_t* capacity
+) {
+	if (*already_prepared) return;
+	else *already_prepared = true;
+
+	*capacity = plugin->channels.output_midi->atom.size;
+
+	lv2_atom_sequence_clear(plugin->channels.output_midi);
+	plugin->channels.output_midi->atom.type = plugin->uris.atom_Sequence;
+}
+
 static inline void gen_midi_event(
 	Plugin* plugin,
 	uint32_t *capacity,
@@ -25,10 +37,10 @@ static inline void gen_midi_event(
 	uint8_t* msg = (uint8_t *)LV2_ATOM_BODY(&event->body);
 
 	msg[0] = type;
-	msg[1] = floor(*(plugin->channels.midi_note));
+	msg[1] = plugin->last_midi_note;
 
 	if (type == LV2_MIDI_MSG_NOTE_OFF) {
-		msg[0] = 0;
+		msg[2] = 0;
 	} else {
 		const float rms_min = *(plugin->channels.threshold);
 		const float rms_max = *(plugin->channels.limit_rms_velocity_ceiling);
@@ -55,38 +67,39 @@ static inline void gen_midi_event(
 	free(event);
 }
 
-static inline void prepare_midi_port(
-	Plugin* plugin, bool* already_prepared, uint32_t* capacity
-) {
-	if (*already_prepared) return;
-	else *already_prepared = true;
-
-	*capacity = plugin->channels.output_midi->atom.size;
-
-	lv2_atom_sequence_clear(plugin->channels.output_midi);
-	plugin->channels.output_midi->atom.type = plugin->uris.atom_Sequence;
-}
-
 void run(LV2_Handle instance, uint32_t n_samples) {
 	Plugin *plugin = (Plugin *)instance;
 
 	bool already_prepared = false;
 	uint32_t capacity;
 
-	if (plugin->next_buf_note_on) {
+	if (plugin->next_buf_note != LV2_MIDI_MSG_RESET) {
 		prepare_midi_port(plugin, &already_prepared, &capacity);
 		gen_midi_event(
-			plugin, &capacity, LV2_MIDI_MSG_NOTE_ON, 0, plugin->next_buf_rms_dB);
-		plugin->next_buf_note_on = false;
+			plugin, &capacity, plugin->next_buf_note,
+			0, plugin->next_buf_rms_dB);
+		plugin->next_buf_note = LV2_MIDI_MSG_RESET;
 	}
 
-	// TODO optimize
 	uint32_t detector_buf_size =
 		SAMPLES_IN_MS( *(plugin->channels.detector_buffer), plugin->SR );
 	uint32_t gap_size =
 		SAMPLES_IN_MS( *(plugin->channels.detector_gap), plugin->SR );
+	uint32_t note_off_delay =
+		SAMPLES_IN_MS( *(plugin->channels.note_off_delay), plugin->SR );
 
-	// TODO store last midi note and after change send note off
+	// get current midi note control knob value
+	uint8_t midi_note = (uint8_t)(*(plugin->channels.midi_note));
+	if (midi_note != plugin->last_midi_note) {
+		prepare_midi_port(plugin, &already_prepared, &capacity);
+		gen_midi_event(plugin, &capacity, LV2_MIDI_MSG_NOTE_OFF, 0, 0.0f);
+		plugin->last_midi_note = midi_note;
+	}
+
+	// get current "note-off mode" control knob value
+	uint8_t note_off_mode = (uint8_t)(*(plugin->channels.note_off_mode));
+	if (note_off_mode < NOTE_OFF_MODE_MIN) note_off_mode = NOTE_OFF_MODE_MIN;
+	else if (note_off_mode > NOTE_OFF_MODE_MAX) note_off_mode = NOTE_OFF_MODE_MAX;
 
 	// if detector buffer size is changed then reset all counters
 	if (plugin->detector_buf_size != detector_buf_size) {
@@ -97,8 +110,21 @@ void run(LV2_Handle instance, uint32_t n_samples) {
 	}
 
 	for (uint32_t i=0; i<n_samples; i++) {
+		// if we have delayed note-off to send
+		if (plugin->note_off_delay_samples != 0) {
+			plugin->note_off_delay_samples = note_off_delay;
+
+			if (plugin->note_off_delay_counter >= plugin->note_off_delay_samples) {
+				prepare_midi_port(plugin, &already_prepared, &capacity);
+				gen_midi_event(plugin, &capacity, LV2_MIDI_MSG_NOTE_OFF, 0, 0.0f);
+				plugin->note_off_delay_counter = 0;
+				plugin->note_off_delay_samples = 0;
+			} else {
+				plugin->note_off_delay_counter++;
+			}
+		}
+
 		// waiting for gap if gap is active
-		// TODO skip gap rest samples for i (optimization)
 		if (plugin->is_gap_active) {
 			// if waiting is finished
 			if (plugin->detector_gap_counter >= gap_size) {
@@ -125,23 +151,72 @@ void run(LV2_Handle instance, uint32_t n_samples) {
 		// if we have fully filled detector buffer
 
 		// calculate RMS in dB by detector buffer
-		// TODO support calculating in own thread
+		// TODO support calculating in own thread (optional feature for fun)
 		float rms_dB =
 			CO_DB(rms(plugin->detector_buffer, plugin->detector_buf_size));
 
 		// if RMS has enough loud peak to send MIDI note
 		if (rms_dB >= *(plugin->channels.threshold)) {
-
 			prepare_midi_port(plugin, &already_prepared, &capacity);
 
-			gen_midi_event(plugin, &capacity, LV2_MIDI_MSG_NOTE_OFF, i, 0.0f);
+			LV2_Midi_Message_Type midi_type_1;
+			LV2_Midi_Message_Type midi_type_2;
 
-			uint32_t frame = i + 1;
-			if (frame >= n_samples) {
-				plugin->next_buf_rms_dB = rms_dB;
-				plugin->next_buf_note_on = true;
-			} else {
-				gen_midi_event(plugin, &capacity, LV2_MIDI_MSG_NOTE_ON, frame, rms_dB);
+			switch (note_off_mode) {
+				case 1:
+					midi_type_1 = LV2_MIDI_MSG_NOTE_OFF;
+					midi_type_2 = LV2_MIDI_MSG_NOTE_ON;
+					break;
+				case 2:
+					midi_type_1 = LV2_MIDI_MSG_NOTE_ON;
+					midi_type_2 = LV2_MIDI_MSG_NOTE_OFF;
+					break;
+			}
+
+			switch (note_off_mode) {
+				case 1:
+				case 2:
+					gen_midi_event(plugin, &capacity, midi_type_1, i, rms_dB);
+
+					if (i+1 >= n_samples) {
+						// note shifted to next buffer
+						plugin->next_buf_rms_dB = rms_dB;
+						plugin->next_buf_note = midi_type_2;
+					} else {
+						// note to next sample in same buffer
+						gen_midi_event(plugin, &capacity, midi_type_2, i+1, rms_dB);
+					}
+
+					break;
+
+				case 3:
+					// if we have delayed note-off to send then send it immediately before note-on
+					if (plugin->note_off_delay_samples != 0) {
+						gen_midi_event(plugin, &capacity, LV2_MIDI_MSG_NOTE_OFF, i, rms_dB);
+
+						if (i+1 >= n_samples) {
+							// note shifted to next buffer
+							plugin->next_buf_rms_dB = rms_dB;
+							plugin->next_buf_note = LV2_MIDI_MSG_NOTE_ON;
+						} else {
+							// note to next sample in same buffer
+							gen_midi_event(plugin, &capacity, LV2_MIDI_MSG_NOTE_ON, i+1, rms_dB);
+						}
+					} else {
+						gen_midi_event(plugin, &capacity, LV2_MIDI_MSG_NOTE_ON, i, rms_dB);
+					}
+					plugin->note_off_delay_counter = 0;
+					plugin->note_off_delay_samples = note_off_delay;
+
+				case 4:
+					gen_midi_event(plugin, &capacity, LV2_MIDI_MSG_NOTE_ON, i, rms_dB);
+					plugin->note_off_delay_counter = 0;
+					plugin->note_off_delay_samples = note_off_delay;
+					break;
+
+				case 5:
+					gen_midi_event(plugin, &capacity, LV2_MIDI_MSG_NOTE_ON, i, rms_dB);
+					break;
 			}
 
 			// enable waiting for gap

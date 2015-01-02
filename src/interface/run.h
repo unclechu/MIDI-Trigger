@@ -10,7 +10,6 @@
 #define RUN_H
 
 #include <stdlib.h>
-#include <math.h>
 #include <inttypes.h>
 
 #include "lv2/lv2plug.in/ns/lv2core/lv2.h"

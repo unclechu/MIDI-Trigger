@@ -17,12 +17,15 @@ LV2_Handle instantiate (
 	Plugin *plugin = (Plugin *)malloc(sizeof(Plugin));
 	if (!plugin) return NULL;
 
+	// reset
 	plugin->map = NULL;
 	plugin->detector_buf_size = 0;
 	plugin->detector_counter = 0;
 	plugin->detector_gap_counter = 0;
 	plugin->is_gap_active = false;
-	plugin->next_buf_note_on = false;
+	plugin->next_buf_note = LV2_MIDI_MSG_RESET;
+	plugin->note_off_delay_counter = 0;
+	plugin->note_off_delay_samples = 0;
 
 	// get host features
 	for (int i=0; features && features[i]; ++i) {

@@ -14,8 +14,13 @@
 
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 #include "lv2/lv2plug.in/ns/ext/urid/urid.h"
+#include "lv2/lv2plug.in/ns/ext/midi/midi.h"
 
 #include "uris.h"
+
+#define DETECTOR_BUFFER_MAX 200 // ms
+#define NOTE_OFF_MODE_MIN 1
+#define NOTE_OFF_MODE_MAX 5
 
 typedef enum {
 	input_audio = 0,
@@ -70,9 +75,16 @@ typedef struct {
 	uint32_t detector_gap_counter; // samples counter
 	bool is_gap_active; // waiting flag, TODO do stuff without this flag
 
-	// note on to next buffer
-	bool next_buf_note_on;
+	uint8_t last_midi_note;
+	uint8_t last_note_off_mode;
+
+	// note to next buffer (for send note after last sample in buffer)
+	LV2_Midi_Message_Type next_buf_note;
 	float next_buf_rms_dB;
+
+	// delayed note off
+	uint32_t note_off_delay_counter;
+	uint32_t note_off_delay_samples; // zero means that now we have no delayed note-off to send
 } Plugin;
 
 #endif // TYPES_H
