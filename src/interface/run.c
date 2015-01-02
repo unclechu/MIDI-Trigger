@@ -54,10 +54,13 @@ static inline void gen_midi_event(
 		const float vel_len = LEN(vel_min, vel_max);
 		const float rms_by_len = rms_dB - rms_min;
 
-		if (rms_len <= 0 || vel_len <= 0) {
+		if (rms_len <= 0 || vel_len < 0) {
 			msg[2] = 0;
 		} else {
-			msg[2] = (uint8_t)(((rms_by_len * vel_len) / rms_len) + vel_min);
+			float vel = ((rms_by_len * vel_len) / rms_len) + vel_min;
+			if (vel < 1) vel = 1;
+			else if (vel > 128) vel = 128;
+			msg[2] = (uint8_t)(vel) - 1;
 		}
 	}
 
