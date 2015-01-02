@@ -47,9 +47,11 @@ typedef enum {
 	detector_gap = 4,
 	threshold = 5,
 	midi_note = 6,
-	velocity_floor = 7,
-	velocity_ceiling = 8,
-	limit_rms_velocity_ceiling = 9
+	note_off_mode = 7,
+	note_off_delay = 8,
+	velocity_floor = 9,
+	velocity_ceiling = 10,
+	limit_rms_velocity_ceiling = 11
 } PortIndex;
 
 
@@ -64,6 +66,20 @@ typedef struct {
 	const float* velocity_floor;
 	const float* velocity_ceiling;
 	const float* limit_rms_velocity_ceiling;
+
+	/**
+	 * 1 - Send NOTE-OFF immediately before NOTE-ON;
+	 * 2 - Send NOTE-OFF immediately after NOTE-ON;
+	 * 3 - Send NOTE-OFF after "note-off delay" or early if it interrupted by
+	 *     other NOTE-ON;
+	 * 4 - Send NOTE-OFF after "note-off delay" only if it not interrupted by
+	 *     other NOTE-ON;
+	 * 5 - Don't send NOTE-OFF... NEVER!!!
+	 */
+	const float* note_off_mode;
+
+	/** Only for 3 or 4 modes of "note off mode" */
+	const float* note_off_delay;
 } Channels;
 
 

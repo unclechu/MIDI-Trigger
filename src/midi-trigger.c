@@ -92,6 +92,12 @@ static void connect_port(LV2_Handle instance, uint32_t port, void* data) {
 		case midi_note:
 			plugin->channels.midi_note = (float *)data;
 			break;
+		case note_off_mode:
+			plugin->channels.note_off_mode = (float *)data;
+			break;
+		case note_off_delay:
+			plugin->channels.note_off_delay = (float *)data;
+			break;
 		case velocity_floor:
 			plugin->channels.velocity_floor = (float *)data;
 			break;

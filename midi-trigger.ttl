@@ -76,6 +76,22 @@ p:
 	], [
 		a lv2:ControlPort, lv2:InputPort;
 		lv2:index 7;
+		lv2:symbol "note_off_mode";
+		lv2:name "Note-off mode";
+		lv2:minimum 1;
+		lv2:maximum 5;
+		lv2:default 1;
+	], [
+		a lv2:ControlPort, lv2:InputPort;
+		lv2:index 8;
+		lv2:symbol "note_off_delay";
+		lv2:name "Note-off delay (ms)";
+		lv2:minimum 1;
+		lv2:maximum 2000;
+		lv2:default 100;
+	], [
+		a lv2:ControlPort, lv2:InputPort;
+		lv2:index 9;
 		lv2:symbol "velocity_floor";
 		lv2:name "Velocity floor value";
 		lv2:minimum 1;
@@ -83,7 +99,7 @@ p:
 		lv2:default 1;
 	], [
 		a lv2:ControlPort, lv2:InputPort;
-		lv2:index 8;
+		lv2:index 10;
 		lv2:symbol "velocity_ceiling";
 		lv2:name "Velocity ceiling value";
 		lv2:minimum 1;
@@ -91,7 +107,7 @@ p:
 		lv2:default 128;
 	], [
 		a lv2:ControlPort, lv2:InputPort;
-		lv2:index 9;
+		lv2:index 11;
 		lv2:symbol "limit_rms_velocity_ceiling";
 		lv2:name "Limit RMS for velocity ceiling (dB)";
 		lv2:minimum -90;
