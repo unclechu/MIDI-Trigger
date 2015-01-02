@@ -1,7 +1,7 @@
 MIDI Trigger
 ============
 
-LV2 plugin which detects peaks by audio signal and send MIDI notes.
+LV2 plugin which detects peaks by audio signal and sends MIDI notes.
 
 Authors
 =======
