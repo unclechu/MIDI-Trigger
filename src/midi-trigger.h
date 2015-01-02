@@ -77,6 +77,10 @@ typedef struct {
 	uint32_t detector_counter; // samples counter
 	uint32_t detector_gap_counter; // samples counter
 	bool is_gap_active; // waiting flag, TODO do stuff without this flag
+
+	// note on to next buffer
+	bool next_buf_note_on;
+	float next_buf_rms_dB;
 } Plugin;
 
 static LV2_Handle instantiate (

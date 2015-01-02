@@ -42,6 +42,7 @@ static LV2_Handle instantiate (
 	plugin->detector_counter = 0;
 	plugin->detector_gap_counter = 0;
 	plugin->is_gap_active = false;
+	plugin->next_buf_note_on = false;
 
 	// get host features
 	for (int i=0; features && features[i]; ++i) {
@@ -167,6 +168,13 @@ static void run(LV2_Handle instance, uint32_t n_samples) {
 	bool already_prepared = false;
 	uint32_t capacity;
 
+	if (plugin->next_buf_note_on) {
+		prepare_midi_port(plugin, &already_prepared, &capacity);
+		gen_midi_event(
+			plugin, &capacity, LV2_MIDI_MSG_NOTE_ON, 0, plugin->next_buf_rms_dB);
+		plugin->next_buf_note_on = false;
+	}
+
 	// TODO optimize
 	uint32_t detector_buf_size =
 		SAMPLES_IN_MS( *(plugin->channels.detector_buffer), plugin->SR );
@@ -219,12 +227,17 @@ static void run(LV2_Handle instance, uint32_t n_samples) {
 		// if RMS has enough loud peak to send MIDI note
 		if (rms_dB >= *(plugin->channels.threshold)) {
 
-			// temporarly test solution
-			uint32_t frame = i;
-			if (frame <= 0) frame = 1;
 			prepare_midi_port(plugin, &already_prepared, &capacity);
-			gen_midi_event(plugin, &capacity, LV2_MIDI_MSG_NOTE_OFF, frame-1, 0.0f);
-			gen_midi_event(plugin, &capacity, LV2_MIDI_MSG_NOTE_ON, frame, rms_dB);
+
+			gen_midi_event(plugin, &capacity, LV2_MIDI_MSG_NOTE_OFF, i, 0.0f);
+
+			uint32_t frame = i + 1;
+			if (frame >= n_samples) {
+				plugin->next_buf_rms_dB = rms_dB;
+				plugin->next_buf_note_on = true;
+			} else {
+				gen_midi_event(plugin, &capacity, LV2_MIDI_MSG_NOTE_ON, frame, rms_dB);
+			}
 
 			// enable waiting for gap
 			plugin->is_gap_active = true;
