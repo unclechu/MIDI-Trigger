@@ -9,6 +9,8 @@
 #ifndef URIS_H
 #define URIS_H
 
+#include "lv2/lv2plug.in/ns/ext/atom/atom.h"
+#include "lv2/lv2plug.in/ns/ext/urid/urid.h"
 #include "lv2/lv2plug.in/ns/ext/midi/midi.h"
 
 typedef struct {
@@ -16,9 +18,6 @@ typedef struct {
 	LV2_URID midi_Event;
 } PluginURIs;
 
-void map_plugin_uris(LV2_URID_Map* mapinst, PluginURIs* uris) {
-	uris->atom_Sequence = mapinst->map(mapinst->handle, LV2_ATOM__Sequence);
-	uris->midi_Event = mapinst->map(mapinst->handle, LV2_MIDI__MidiEvent);
-}
+void map_plugin_uris(LV2_URID_Map* mapinst, PluginURIs* uris);
 
 #endif // URIS_H
