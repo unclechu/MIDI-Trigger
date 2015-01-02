@@ -180,7 +180,6 @@ void run(LV2_Handle instance, uint32_t n_samples) {
 				case 1:
 				case 2:
 					gen_midi_event(plugin, &capacity, midi_type_1, i, rms_dB);
-
 					if (i+1 >= n_samples) {
 						// note shifted to next buffer
 						plugin->next_buf_rms_dB = rms_dB;
@@ -189,7 +188,6 @@ void run(LV2_Handle instance, uint32_t n_samples) {
 						// note to next sample in same buffer
 						gen_midi_event(plugin, &capacity, midi_type_2, i+1, rms_dB);
 					}
-
 					break;
 
 				case 3:
@@ -210,6 +208,7 @@ void run(LV2_Handle instance, uint32_t n_samples) {
 					}
 					plugin->note_off_delay_counter = 0;
 					plugin->note_off_delay_samples = note_off_delay;
+					break;
 
 				case 4:
 					gen_midi_event(plugin, &capacity, LV2_MIDI_MSG_NOTE_ON, i, rms_dB);
