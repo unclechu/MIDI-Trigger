@@ -10,7 +10,7 @@
 p:
 	a lv2:Plugin, lv2:MixerPlugin;
 	lv2:binary <midi-trigger.so>;
-	doap:name "MIDI Trigger";
+	doap:name "MIDI-Trigger";
 	doap:maintainer [
 		foaf:name "Viacheslav Lotsmanov";
 		foaf:mbox <mailto:lotsmanov89@gmail.com>;
@@ -32,7 +32,7 @@ p:
 		lv2atom:supports lv2midi:MidiEvent;
 		lv2:index 1;
 		lv2:symbol "output_midi_trigger";
-		lv2:name "Output MIDI trigger";
+		lv2:name "Output MIDI-trigger";
 	];
 	lv2:port [
 		a lv2:ControlPort, lv2:InputPort;

@@ -1,13 +1,18 @@
-MIDI Trigger
+MIDI-Trigger
 ============
 
-LV2 plugin which detects peaks by audio signal and sends MIDI notes.
+LV2 plugin which generates MIDI notes by detected audio signal peaks.
 
 Authors
 =======
 
 * [Viacheslav Lotsmanov](https://github.com/unclechu)
-* [Andrew Fatkulin](https://github.com/fn-andrw)
+* [Andrew Fatkulin](https://github.com/anlaakso)
+
+Contributors
+============
+
+* [Olivier Humbert](https://github.com/trebmuh)
 
 License
 =======
