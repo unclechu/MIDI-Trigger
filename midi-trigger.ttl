@@ -10,7 +10,8 @@
 p:
 	a lv2:Plugin, lv2:MixerPlugin;
 	lv2:binary <midi-trigger.so>;
-	doap:name "MIDI-Trigger";
+	doap:name "MIDI-Trigger",
+	  "Déclencheur MIDI"@fr ;
 	doap:maintainer [
 		foaf:name "Viacheslav Lotsmanov";
 		foaf:mbox <mailto:lotsmanov89@gmail.com>;
@@ -24,7 +25,8 @@ p:
 		a lv2:AudioPort, lv2:InputPort;
 		lv2:index 0;
 		lv2:symbol "input_audio_src";
-		lv2:name "Input audio source";
+		lv2:name "Input audio source",
+		  "Source audio en entrée "@fr ;
 	];
 	lv2:port [
 		a lv2:OutputPort, lv2atom:AtomPort;
@@ -32,13 +34,15 @@ p:
 		lv2atom:supports lv2midi:MidiEvent;
 		lv2:index 1;
 		lv2:symbol "output_midi_trigger";
-		lv2:name "Output MIDI-trigger";
+		lv2:name "Output MIDI-trigger",
+		  "Déclencheur MIDI en sortie "@fr ;
 	];
 	lv2:port [
 		a lv2:ControlPort, lv2:InputPort;
 		lv2:index 2;
 		lv2:symbol "input_gain";
-		lv2:name "Input gain (dB)";
+		lv2:name "Input gain (dB)",
+		  "Gain d'entrée (dB) "@fr ;
 		lv2:minimum -90;
 		lv2:maximum 12;
 		lv2:default 0;
@@ -46,7 +50,8 @@ p:
 		a lv2:ControlPort, lv2:InputPort;
 		lv2:index 3;
 		lv2:symbol "detector_buffer";
-		lv2:name "Detector buffer (ms)";
+		lv2:name "Detector buffer (ms)",
+		  "Tampon de détection (ms) "@fr ;
 		lv2:minimum 1;
 		lv2:maximum 200;
 		lv2:default 5;
@@ -54,7 +59,8 @@ p:
 		a lv2:ControlPort, lv2:InputPort;
 		lv2:index 4;
 		lv2:symbol "detector_gap";
-		lv2:name "Detector gap (ms)";
+		lv2:name "Detector gap (ms)",
+		  "Détecteur de vide (ms) "@fr ;
 		lv2:minimum 10;
 		lv2:maximum 2000;
 		lv2:default 100;
@@ -62,7 +68,8 @@ p:
 		a lv2:ControlPort, lv2:InputPort;
 		lv2:index 5;
 		lv2:symbol "threshold";
-		lv2:name "Threshold (dB)";
+		lv2:name "Threshold (dB)",
+		  "Seuil de déclenchement (dB) "@fr ;
 		lv2:minimum -60;
 		lv2:maximum 0;
 		lv2:default -20;
@@ -70,7 +77,8 @@ p:
 		a lv2:ControlPort, lv2:InputPort;
 		lv2:index 6;
 		lv2:symbol "midi_note";
-		lv2:name "MIDI note";
+		lv2:name "MIDI note",
+		  "Note MIDI "@fr ;
 		lv2:minimum 21;
 		lv2:maximum 108;
 		lv2:default 60;
@@ -78,7 +86,8 @@ p:
 		a lv2:ControlPort, lv2:InputPort;
 		lv2:index 7;
 		lv2:symbol "note_off_mode";
-		lv2:name "Note-off mode";
+		lv2:name "Note-off mode",
+		  "Mode note-off "@fr ;
 		lv2:minimum 1;
 		lv2:maximum 5;
 		lv2:default 1;
@@ -86,7 +95,8 @@ p:
 		a lv2:ControlPort, lv2:InputPort;
 		lv2:index 8;
 		lv2:symbol "note_off_delay";
-		lv2:name "Note-off delay (ms)";
+		lv2:name "Note-off delay (ms)",
+		  "Délais de note-off (ms) "@fr ;
 		lv2:minimum 1;
 		lv2:maximum 2000;
 		lv2:default 100;
@@ -94,7 +104,8 @@ p:
 		a lv2:ControlPort, lv2:InputPort;
 		lv2:index 9;
 		lv2:symbol "velocity_floor";
-		lv2:name "Velocity floor value";
+		lv2:name "Velocity floor value",
+		  "Valeur-plancher de la vélocité "@fr ;
 		lv2:minimum 1;
 		lv2:maximum 128;
 		lv2:default 1;
@@ -102,7 +113,8 @@ p:
 		a lv2:ControlPort, lv2:InputPort;
 		lv2:index 10;
 		lv2:symbol "velocity_ceiling";
-		lv2:name "Velocity ceiling value";
+		lv2:name "Velocity ceiling value",
+		  "Valeur-plafond de la vélocité "@fr ;
 		lv2:minimum 1;
 		lv2:maximum 128;
 		lv2:default 128;
@@ -110,7 +122,8 @@ p:
 		a lv2:ControlPort, lv2:InputPort;
 		lv2:index 11;
 		lv2:symbol "limit_rms_velocity_ceiling";
-		lv2:name "Limit RMS for velocity ceiling (dB)";
+		lv2:name "Limit RMS for velocity ceiling (dB)",
+		  "Limite RMS pour le plafond de vélocité (dB) "@fr ;
 		lv2:minimum -90;
 		lv2:maximum 0;
 		lv2:default 0;
