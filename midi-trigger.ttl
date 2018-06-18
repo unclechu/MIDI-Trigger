@@ -19,7 +19,7 @@ p:
 		foaf:name "Andrew Fatkulin";
 		foaf:mbox <mailto:fn.andrw@gmail.com>;
 	];
-	doap:license <http://usefulinc.com/doap/licenses/lgpl>;
+	doap:license <http://usefulinc.com/doap/licenses/gpl>;
 
 	lv2:port [
 		a lv2:AudioPort, lv2:InputPort;

@@ -29,4 +29,4 @@ Contributors
 License
 =======
 
-[GNU/GPLv3](./LICENSE)
+[GPLv3](./LICENSE)
