@@ -7,7 +7,7 @@ Authors
 =======
 
 * [Viacheslav Lotsmanov](https://github.com/unclechu)
-* [Andrew Fatkulin](https://github.com/AndrwFn)
+* [Andrew Fatkulin](https://github.com/ponyloop)
 
 License
 =======
