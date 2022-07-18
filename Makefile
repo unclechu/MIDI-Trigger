@@ -6,7 +6,9 @@ CXX = gcc
 CXX_FLAGS = -std=c99 -fPIC -DPIC
 
 ifeq ($(DEBUG),Y)
-	DEBUG_C_FLAGS = -g -DDEBUG
+	RELEASE_C_FLAGS = -O0 -g -DDEBUG
+else
+	RELEASE_C_FLAGS = -O
 endif
 
 TTLS = manifest.ttl "$(NAME)".ttl
@@ -32,7 +34,7 @@ $(BUILD_DIR)/interface/run.o $(BUILD_DIR)/interface/cleanup.o
 		"$(BUILD_DIR)"/interface/connect_port.o \
 		"$(BUILD_DIR)"/interface/run.o \
 		"$(BUILD_DIR)"/interface/cleanup.o \
-		$(LIBS) -o "$(BUILD_DIR)"/"$(NAME)".so $(DEBUG_C_FLAGS) $(C_FLAGS)
+		$(LIBS) -o "$(BUILD_DIR)"/"$(NAME)".so $(RELEASE_C_FLAGS) $(C_FLAGS)
 
 $(BUILD_DIR)/uris.o: prepare-build
 	$(CXX) $(CXX_FLAGS) src/uris.c -c -o "$(BUILD_DIR)"/uris.o

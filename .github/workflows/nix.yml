@@ -11,6 +11,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macOS-latest]
+        debugBuild: ['true', 'false']
 
     runs-on: ${{ matrix.os }}
 
@@ -24,5 +25,5 @@ jobs:
             access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
             system-features = nixos-test benchmark big-parallel kvm
 
-      - name: Test Nix build
-        run: nix-build --arg debugBuild true
+      - name: Test Nix build (debug build: ${{ matrix.debugBuild }})
+        run: nix-build --arg debugBuild ${{ matrix.debugBuild }}
