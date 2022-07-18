@@ -7,6 +7,10 @@ But also it can be used for some weird experiments. Just put some track as a
 sound source, connect MIDI output to some synth, automate “MIDI note” value,
 and see what happens.
 
+The **MIDI-Trigger** plugin has one mono audio input and one MIDI output.
+So it takes audio signal as an input and provides MIDI output with the triggered
+notes you can connect to some synth or sampler.
+
 Disclaimer: This plugin works and was already used in some recorded band albums
 to improve drum sounds by adding a retriggered drum sample. Though it’s missing
 a GUI at the moment which would make it a bit easier to use. Also the program
@@ -31,6 +35,31 @@ So basically you need to pay attention to these 3 values:
 - *4* — Send **NOTE-OFF** after “Note-off delay”
         only if it’s not interrupted by another **NOTE-ON**
 - *5* — Don’t send **NOTE-OFF**s
+
+### Using with Ardour
+
+It’s not a common combination for a plugin to have an audio input and a MIDI
+output. So by default Ardour doesn’t commutate it properly. Here is a steps you
+need to follow to make it work:
+
+1. Add an audio/bus track and add “MIDI-Trigger” plugin to it (before fader)
+
+2. Open context menu of the plugin (right mouse click) and open
+   “Pin connections...”
+
+   You should see that the plugin in the center has one red MIDI output port.
+   But it’s not connected anywhere because plugin has only one green audio
+   output port to the outside world.
+
+3. Click “Manual Config” button
+4. Add “MIDI Out” port (click “+” plus button)
+5. Remove “Audio Out” (click “-” minus button)
+
+6. Click and hold on the plugins’s MIDI port and drag it to the outer MIDI
+   output so that it makes a connection
+
+7. Now you can put a sampler or a synth after the plugin which takes MIDI signal
+   as an input
 
 ### How to build and run
 
