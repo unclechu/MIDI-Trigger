@@ -19,6 +19,14 @@ a GUI at the moment which would make it a bit easier to use. Also the program
 doesn’t have any versioning yet, so just take latest `master` branch state. If
 you follow usage info instruction it should be no problem to use it.
 
+## Supported OSes
+
+1. GNU/Linux — Tested by me personally on NixOS
+   and builds successfully on Ubuntu in CI using Nix
+
+2. MacOS — I don’t have a machine to test it but in CI it successfully builds
+   using Nix
+
 ## Usage info
 
 The defaults for the knobs are tuned for retriggering drum tracks.
