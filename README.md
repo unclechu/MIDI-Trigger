@@ -19,7 +19,7 @@ Authors
 =======
 
 * [Viacheslav Lotsmanov](https://github.com/unclechu)
-* [Andrew Fatkulin](https://github.com/anlaakso)
+* [Andrew Fatkulin](https://github.com/co-yo-ne-da)
 
 Contributors
 ============
