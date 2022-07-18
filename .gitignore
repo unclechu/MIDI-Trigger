@@ -8,3 +8,6 @@
 *.o
 *.so
 *.lv2
+
+# Nix build artifacts
+result*
