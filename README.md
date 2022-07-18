@@ -1,10 +1,8 @@
-MIDI-Trigger
-============
+# MIDI-Trigger
 
 LV2 plugin which generates MIDI notes by detected audio signal peaks.
 
-Usage info
-==========
+## Usage info
 
 Description of **"Note-off mode"** knob (in the future it will be presented in GUI):
 - *1* — Send **NOTE-OFF** immediately before **NOTE-ON**;
@@ -15,18 +13,15 @@ Description of **"Note-off mode"** knob (in the future it will be presented in G
         other **NOTE-ON**;
 - *5* — Don't send **NOTE-OFF**... NEVER!!!
 
-Authors
-=======
+## Authors
 
 * [Viacheslav Lotsmanov](https://github.com/unclechu)
 * [Andrew Fatkulin](https://github.com/co-yo-ne-da)
 
-Contributors
-============
+## Contributors
 
 * [Olivier Humbert](https://github.com/trebmuh)
 
-License
-=======
+## License
 
 [GPLv3](./LICENSE)
