@@ -131,6 +131,31 @@ Or using Nix:
 nix-build --argstr compiler clang
 ```
 
+#### Installing globally on NixOS
+
+Here is an example for your `configuration.nix`:
+
+``` nix
+{ pkgs, ... }:
+let
+  midi-trigger-src = fetchTarball {
+    url = "https://github.com/NixOS/nixpkgs/archive/0000000000000000000000000000000000000000.tar.gz";
+    sha256 = "0000000000000000000000000000000000000000000000000000";
+  };
+
+  midi-trigger = pkgs.callPackage midi-trigger-src { src = midi-trigger-src; };
+in
+{
+  environment.systemPackages = [
+    midi-trigger
+  ];
+}
+```
+
+Paste commit hash to the placeholder after `/archive/` and before `.tar.gz` and
+run once to get calculated SHA256 checksum in the error log. Then paste that
+SHA256 checksum to the `sha256` field and rebuild one more time.
+
 ## Development hints
 
 ### direnv
