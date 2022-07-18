@@ -13,11 +13,10 @@ The **MIDI-Trigger** plugin has one mono audio input and one MIDI output.
 So it takes audio signal as an input and provides MIDI output with the triggered
 notes you can connect to some synth or sampler.
 
-Disclaimer: This plugin works and was already used in some recorded band albums
-to improve drum sounds by adding a retriggered drum sample. Though it’s missing
-a GUI at the moment which would make it a bit easier to use. Also the program
-doesn’t have any versioning yet, so just take latest `master` branch state. If
-you follow usage info instruction it should be no problem to use it.
+This plugin works and has already been used in some recorded band albums to
+improve drum sounds by adding a retriggered drum sample. Though it’s missing a
+GUI at the moment which would make it a bit easier to use. If you follow usage
+info instruction it should be no problem to use it.
 
 ## Supported OSes
 
