@@ -95,6 +95,15 @@ let
       mkdir -p -- "$LV2_DIR"
       mv -- "$name".lv2 "$LV2_DIR"
     )'';
+
+    meta = with lib; {
+      homepage = "https://github.com/unclechu/MIDI-Trigger";
+      description =
+        "LV2 plugin which generates MIDI notes by detected audio signal peaks";
+      maintainers = with maintainers; [ unclechu ];
+      license = licenses.gpl3Only;
+      platforms = platforms.linux ++ platforms.darwin;
+    };
   };
 in
 
