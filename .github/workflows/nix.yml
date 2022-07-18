@@ -25,5 +25,5 @@ jobs:
             access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
             system-features = nixos-test benchmark big-parallel kvm
 
-      - name: Test Nix build (debug build: ${{ matrix.debugBuild }})
+      - name: 'Test Nix build (debug build: ${{ matrix.debugBuild }})'
         run: nix-build --arg debugBuild ${{ matrix.debugBuild }}
