@@ -3,7 +3,7 @@
 
 	@author Viacheslav Lotsmanov
 	@author Andrew Fatkulin
-	@license GNU/GPLv3 https://github.com/metachronica/audio-dsp-midi-trigger/blob/master/LICENSE
+	@license GNU/GPLv3 https://github.com/unclechu/MIDI-Trigger/blob/master/LICENSE
 */
 
 #ifndef DEFINE_H
@@ -11,7 +11,7 @@
 
 #include <math.h>
 
-#define PLUGIN_URI "https://github.com/metachronica/audio-dsp-midi-trigger"
+#define PLUGIN_URI "https://github.com/unclechu/MIDI-Trigger"
 
 /** Define a macro for converting a gain in dB to a coefficient */
 #define DB_CO(g) ((g) > -90.0f ? powf(10.0f, (g) * 0.05f) : 0.0f)

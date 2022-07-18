@@ -3,7 +3,7 @@
 
 	@author Viacheslav Lotsmanov
 	@author Andrew Fatkulin
-	@license GNU/GPLv3 https://github.com/metachronica/audio-dsp-midi-trigger/blob/master/LICENSE
+	@license GNU/GPLv3 https://github.com/unclechu/MIDI-Trigger/blob/master/LICENSE
 */
 
 #include "run.h"
