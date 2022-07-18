@@ -34,14 +34,41 @@ let
       (srcFilter (toString path))
       [ ./.gitignore ]
       path;
+
+  availableCompilers = [ "gcc" "clang" ];
 in
 
 { pkgs ? import sources.nixpkgs {}
+, lib ? pkgs.lib
+
 , src ? cleanSrc pkgs ./.
+
 , debugBuild ? false
+, compiler ? "gcc" # See “availableCompilers”
+
+, gcc ? pkgs.gcc12 # “pkgs.gcc” is 11.x
+, clang ? pkgs.clang_14 # “pkgs.clang” is 11.x
 }:
 
 let
+  compilerMap = {
+    gcc = "${gcc}/bin/gcc";
+    clang = "${clang}/bin/clang";
+  };
+in
+
+assert builtins.isBool debugBuild;
+assert builtins.isString compiler;
+assert builtins.elem compiler availableCompilers;
+
+assert
+  builtins.all
+    (lib.flip builtins.elem availableCompilers)
+    (builtins.attrNames compilerMap);
+
+let
+  esc = lib.escapeShellArg;
+
   midi-trigger = pkgs.stdenv.mkDerivation rec {
     name = "midi-trigger";
     inherit src;
@@ -49,7 +76,6 @@ let
     nativeBuildInputs = [
       pkgs.gnumake
       pkgs.pkg-config
-      pkgs.gcc
     ];
 
     buildInputs = [
@@ -58,9 +84,8 @@ let
 
     buildPhase = ''(
       set -o nounset
-      make BUILD_DIR=. ${
-        assert builtins.isBool debugBuild;
-        pkgs.lib.optionalString debugBuild "DEBUG=Y"
+      make BUILD_DIR=. CXX=${esc compilerMap.${compiler}} ${
+        pkgs.lib.optionalString debugBuild (esc "DEBUG=Y")
       }
     )'';
 

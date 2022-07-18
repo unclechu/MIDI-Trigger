@@ -12,6 +12,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, macOS-latest]
         debugBuild: ['true', 'false']
+        compiler: [gcc, clang]
 
     runs-on: ${{ matrix.os }}
 
@@ -25,5 +26,6 @@ jobs:
             access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
             system-features = nixos-test benchmark big-parallel kvm
 
-      - name: 'Test Nix build (debug build: ${{ matrix.debugBuild }})'
-        run: nix-build --arg debugBuild ${{ matrix.debugBuild }}
+      - name: 'Test Nix build using ${{ matrix.compiler }} (debug build: ${{ matrix.debugBuild }})'
+        run: |
+          nix-build --argstr compiler ${{ matrix.compiler }} --arg debugBuild ${{ matrix.debugBuild }}

@@ -109,6 +109,20 @@ LV2_PATH="$PWD/result/lib/lv2:$LV2_PATH" ardour6
 
 And find the plugin by “MIDI-Trigger” name.
 
+#### Using Clang instead of GCC
+
+You can compile this program also with Clang like this:
+
+``` sh
+make CXX=clang
+```
+
+Or using Nix:
+
+``` sh
+nix-build --argstr compiler clang
+```
+
 ## Authors
 
 * [Viacheslav Lotsmanov](https://github.com/unclechu)
