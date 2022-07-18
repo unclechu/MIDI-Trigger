@@ -1,5 +1,7 @@
 # MIDI-Trigger
 
+[![Nix CI](https://github.com/unclechu/MIDI-Trigger/actions/workflows/nix.yml/badge.svg)](https://github.com/unclechu/MIDI-Trigger/actions/workflows/nix.yml)
+
 LV2 plugin which generates MIDI notes by detected audio signal peaks.
 
 It can be used to retrigger drums which would be the main purpose of it.
