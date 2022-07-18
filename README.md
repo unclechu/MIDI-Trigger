@@ -131,6 +131,14 @@ Or using Nix:
 nix-build --argstr compiler clang
 ```
 
+## Development hints
+
+### direnv
+
+If you are using [direnv][direnv] you can look at
+[.envrc example file](.envrc.example) (just uses Nix,
+helps to auto-reload `nix-shell`).
+
 ## Authors
 
 * [Viacheslav Lotsmanov](https://github.com/unclechu)
@@ -145,3 +153,4 @@ nix-build --argstr compiler clang
 [GPLv3](./LICENSE)
 
 [Nix]: https://github.com/NixOS/nix
+[direnv]: https://direnv.net
